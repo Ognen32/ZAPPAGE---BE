@@ -20,7 +20,7 @@ export const createGenres = async function (name) {
 export const getAllGenres = async function () {
   const allGenres = await findAllGenres();
   
-  if (!genresAll.length) {
+  if (!allGenres.length) {
     throw new ValidationError("No genres found");
   }
 
