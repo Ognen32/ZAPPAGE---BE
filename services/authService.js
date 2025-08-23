@@ -10,7 +10,7 @@ import { ValidationError } from "../utils/error.js";
 export const registerUserService = async (req, res, next) => {
     try {
       const userData = req.body; // Defining required field data
-      const requiredFields = ['userName', 'email', 'phoneNumber', 'firstName', 'surName', 'password', 'role', 'dateOfBirth', 'city', 'address'];
+      const requiredFields = ['userName', 'email', 'phoneNumber', 'firstName', 'surName', 'password', 'role', 'dateOfBirth'];
   
       if (requiredFields.some(field => !userData[field])) { // Checks if all fields are filled
         return next(new ErrorHandler('All fields are required.', 400));

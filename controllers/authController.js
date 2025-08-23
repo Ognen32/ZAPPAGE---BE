@@ -10,9 +10,7 @@ export const registerUser = catchAsyncError(async (req, res, next) => {
         surName,
         password,
         role,
-        dateOfBirth,
-        city,
-        address,
+        dateOfBirth
       } = req.body;
     await registerUserService(req, res, next); // Calls the service to handle the registry
   });
