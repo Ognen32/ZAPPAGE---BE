@@ -95,4 +95,11 @@ const Comic = sequelize.define("Comic", {
         allowNull: true,
         defaultValue: 0
     }
-}, {timestamps:true})
+}, {timestamps:true});
+
+// associations
+Comic.associate = (models) => {
+  Comic.hasMany(models.Comment, { foreignKey: "comicId" });
+};
+
+export default Comic;

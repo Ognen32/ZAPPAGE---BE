@@ -28,7 +28,7 @@ export const findGenreByID = async function (genreID) {
   }
 };
 
-export const findAllGenres = async function (genres) {
+export const findAllGenres = async function () {
   try {
     return await Genre.findAll();
   }
