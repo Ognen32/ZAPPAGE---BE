@@ -159,10 +159,4 @@ User.prototype.getResetPasswordToken = function () {
   return resetToken;
 };
 
-// associations
-User.associate = (models) => {
-  User.hasMany(models.Comment, { foreignKey: "userId" });
-};
-
-
 export default User;

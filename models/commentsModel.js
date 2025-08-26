@@ -16,8 +16,8 @@ const Comment = sequelize.define(
       references: {
         model: "Users",
         key: "id",
+        onDelete: "CASCADE",
       },
-      onDelete: "CASCADE",
     },
     comicId: {
       type: DataTypes.INTEGER,
@@ -25,8 +25,8 @@ const Comment = sequelize.define(
       references: {
         model: "Comics",
         key: "id",
+        onDelete: "CASCADE",
       },
-      onDelete: "CASCADE",
     },
     text: {
       type: DataTypes.STRING(150),
@@ -39,11 +39,5 @@ const Comment = sequelize.define(
   },
   { timestamps: true }
 );
-
-Comment.associate = (models) => {
-  Comment.belongsTo(models.User, { foreignKey: "userId" });
-  Comment.belongsTo(models.Comic, { foreignKey: "comicId" });
-};
-
 
 export default Comment;

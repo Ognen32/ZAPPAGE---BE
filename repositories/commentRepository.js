@@ -1,5 +1,5 @@
-import Comment from "../models/commentsModel.js";
-import User from "../models/userModel.js";
+import Comment from '../models/commentsModel.js';
+import User from '../models/userModel.js';
 
 export const createComment = async function (userId, comicId, commentText) {
   try {
@@ -37,12 +37,12 @@ export const findAllCommentsByComic = async function (comicId) {
   try {
     return await Comment.findAll({
       where: { comicId },
-      //include: [
-      //  {
-      //    model: User,
-      //    attributes: ["id", "userName", "avatar"],
-      //  },
-      //],
+      include: [
+        {
+          model: User,
+          attributes: ["id", "userName", "avatar"],
+        },
+      ],
     });
   } catch (err) {
     throw new Error(err.message);
