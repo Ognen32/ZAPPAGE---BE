@@ -13,6 +13,6 @@ const router = Router();
 router.post("/comment", isAuthenticated, asyncHandler(handleCreateComment));
 router.delete("/comment/:commentId", isAuthenticated, asyncHandler(handleDeleteComment));
 router.patch("/comment/:commentId", isAuthenticated, asyncHandler(handleEditComment));
-router.get("/comments/comic/:comicId", asyncHandler(handleGetCommentsByComic));     //raboti ama bez podatoci za user
+router.get("/comments/comic/:comicId", asyncHandler(handleGetCommentsByComic));     
 
 export default router;
