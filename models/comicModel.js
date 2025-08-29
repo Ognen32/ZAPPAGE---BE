@@ -95,4 +95,6 @@ const Comic = sequelize.define("Comic", {
         allowNull: true,
         defaultValue: 0
     }
-}, {timestamps:true})
+}, {timestamps:true});
+
+export default Comic;
