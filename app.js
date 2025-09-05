@@ -6,7 +6,6 @@ import { errorMiddleware } from "./middlewares/error.js";
 import authRoutes from "./routes/authRoutes.js";
 import genreRoutes from "./routes/genreRoutes.js";
 import comicRoutes from './routes/comicRoutes.js';
-// import bookRoutes from './routes/bookRoutes.js';
 // import favouriteBookRoutes from './routes/favouriteBookRoutes.js';
 // import transcationRoutes from './routes/transcationRoutes.js';
 // import cartRoutes from './routes/cartRoutes.js';
@@ -34,7 +33,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use('/api', authRoutes);
 app.use('/api', genreRoutes);
 app.use('/api', comicRoutes);
-// app.use('/api', bookRoutes);
 // app.use('/api', favouriteBookRoutes);
 // app.use("/api", transcationRoutes);
 // app.use("/api", cartRoutes);

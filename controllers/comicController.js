@@ -1,5 +1,5 @@
 import catchAsyncError from "../middlewares/catchAsyncError.js";
-import {createComic} from '../services/comicService.js';
+import {createComic, trendingComics, lookUpAComic, updateComics} from '../services/comicService.js';
 import fs from 'fs';
 
 export const handleCreateComic = async (req, res) => {
@@ -37,4 +37,69 @@ export const handleCreateComic = async (req, res) => {
     }catch(err){
         res.status(500).json({ error: err.message });
     }
-}
+};
+
+export const updateComicHandler = async (req, res) => {
+  try{
+    const comicId = req.params.id; 
+    const {
+      title,
+      author,
+      shortDescription,
+      description,
+      releaseDate,
+      publisher,
+      page_count,
+    } = req.body;
+
+    const comicData = {
+      title,
+      author,
+      shortDescription,
+      description,
+      releaseDate,
+      publisher,
+      page_count,
+    };
+
+    const genres = req.body.genre;
+
+   const mainCover = req.files?.mainCover?.[0] || null;
+const coverArt = req.files?.coverArt?.[0] || null;
+const zip = req.files?.comicZip?.[0] || null;
+
+    const updatedComic = await updateComics(
+      comicId,
+      comicData,
+      genres,
+      mainCover,
+      coverArt,
+      zip
+    );
+
+    res.status(200).json({ msg: updatedComic });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+//landing page
+export const getTrendingComicsHandler = async (req, res) => {
+  try {
+    const data = await trendingComics();
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+export const lookUpAComicHandler = async (req, res) => {
+  try {
+    const search = req.query.search || req.body.search;
+    const genres = req.body.genre;
+    const data = await lookUpAComic(search, genres);
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
