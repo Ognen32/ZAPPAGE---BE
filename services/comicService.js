@@ -7,6 +7,7 @@ import {
   findComicsSearchOnlyLanding,
   findComicsByGenresOnlyLanding,
   findComicsBySearchAndGenresLanding,
+  findLatestAddedComics
 } from "../repositories/comicRepository.js";
 import { findGenreByName } from "../repositories/genreRepository.js";
 import { ErrorHandler } from "../middlewares/error.js";
@@ -238,5 +239,19 @@ export const lookUpAComic = async (search, genres) => {
     }
   } catch (err) {
     throw new Error(err.message);
+  }
+};
+
+//user view latest comics
+export const getLatestComics = async () => {
+  try{
+    const latestComics = await findLatestAddedComics();
+    console.log(latestComics);
+    if (!latestComics || latestComics.length === 0) {
+      throw new Error("No comics found");
+    }
+    return latestComics;
+  } catch (err) {
+    throw new Error("No comics found");
   }
 };
