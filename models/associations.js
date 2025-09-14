@@ -18,10 +18,14 @@ Comment.belongsTo(Comic, { foreignKey: "comicId" });
 Comic.belongsToMany(Genre, {
   through: ComicGenre,
   foreignKey: "comicId",
+  otherKey: "genreId",
+  as: "Genres",
 });
 Genre.belongsToMany(Comic, {
   through: ComicGenre,
   foreignKey: "genreId",
+  otherKey: "comicId",
+  as: "Comics",
 });
 
 // Comic and ComicPage
