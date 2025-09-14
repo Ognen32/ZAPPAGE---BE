@@ -7,7 +7,9 @@ import {
   findComicsSearchOnlyLanding,
   findComicsByGenresOnlyLanding,
   findComicsBySearchAndGenresLanding,
-  findLatestAddedComics
+  findLatestAddedComics,
+  findComicsSearch,
+  findComicsSearchWithGenre
 } from "../repositories/comicRepository.js";
 import { findGenreByName } from "../repositories/genreRepository.js";
 import { ErrorHandler } from "../middlewares/error.js";
@@ -253,5 +255,80 @@ export const getLatestComics = async () => {
     return latestComics;
   } catch (err) {
     throw new Error("No comics found");
+  }
+};
+
+//user view search
+export const getComics = async (search, genres, pageNum) => {
+  try {
+    if (!search) {
+      throw new Error("Enter Search");
+    }
+    console.log(pageNum);
+    if (!genres) {
+      genres = []; 
+    } else if (!Array.isArray(genres)) {
+      genres = [genres]; 
+    }
+    console.log(genres);
+    const limit = 12;
+
+    if (
+      search &&
+      search.trim() !== "" &&
+      genres &&
+      genres.length > 0 &&
+      pageNum
+    ) {
+      const comics = await findComicsSearchWithGenre(
+        search,
+        limit,
+        pageNum,
+        genres
+      );
+      const filteredComics = comics.filter((comic) => {
+        const comicGenres = comic.Genres.map((g) => g.genre);
+        return genres.every((g) => comicGenres.includes(g));
+      });
+
+      if (!filteredComics || filteredComics.length === 0) {
+        throw new Error("No comics found with the given search and genres.");
+      }
+
+      return filteredComics;
+    }
+
+    if (search && genres.length > 0 && !pageNum) {
+      const comics = await findComicsSearchWithGenre(search, limit, 1, genres); 
+      const filteredComics = comics.filter((comic) => {
+        const comicGenres = comic.Genres.map((g) => g.genre);
+        return genres.every((g) => comicGenres.includes(g));
+      });
+
+      if (!filteredComics || filteredComics.length === 0) {
+        throw new Error("No comics found with the given search and genres.");
+      }
+
+      return filteredComics;
+    }
+
+    if (search && genres.length === 0 && pageNum) {
+      const comics = await findComicsSearch(search, limit, pageNum);
+
+      if (!comics || comics.length === 0) {
+        throw new Error("No comics found with the given search.");
+      }
+
+      return comics;
+    }
+
+    const comics = await findComicsSearch(search, limit, 1); 
+    if (!comics || comics.length === 0) {
+      throw new Error("No comics found with the given search.");
+    }
+
+    return comics;
+  } catch (err) {
+    throw new Error(err.message);
   }
 };

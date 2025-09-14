@@ -1,5 +1,5 @@
 import express from 'express';
-import {handleCreateComic, updateComicHandler , getTrendingComicsHandler, lookUpAComicHandler, getLatestComicsHandler} from '../controllers/comicController.js';
+import {handleCreateComic, updateComicHandler , getTrendingComicsHandler, lookUpAComicHandler, getLatestComicsHandler, ComicsSearchHandler} from '../controllers/comicController.js';
 import {uploadComicFiles} from '../middlewares/multer.js';
 const router = express.Router();
 
@@ -13,5 +13,6 @@ router.post("/landingPage/LookUpAComic", lookUpAComicHandler);
 
 //user 
 router.get("/latestComics", getLatestComicsHandler);
+router.get("/search", ComicsSearchHandler);
 
 export default router;
