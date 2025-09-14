@@ -204,3 +204,63 @@ export const findLatestAddedComics = async function () {
     throw new Error(err.message);
   }
 };
+
+//user view search
+export const findComicsSearch = async function (search, limit, pageNum, ) {
+  try {
+    const comics = await Comic.findAll({
+      attributes: ["id", "title", "author", "coverArt", "totalViewed", "slug", "releaseDate", "createdAt"],
+      where: {
+        title: {
+          [Op.iLike]: `%${search}%`,
+        },
+      },
+      order: [["title", "ASC"]],
+      limit:limit,
+      offset: (pageNum - 1) * limit,
+      include: [
+        {
+          model: Genre,
+          as: "Genres",
+          attributes: ["id", "genre"],
+          through: { attributes: [] },
+        },
+      ],
+    });
+    return comics;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+export const findComicsSearchWithGenre = async function (search, limit, pageNum, genres) {
+  try {
+    const comics = await Comic.findAll({
+      attributes: ["id", "title", "author", "coverArt", "totalViewed", "slug", "releaseDate", "createdAt"],
+      where: {
+        title: {
+          [Op.iLike]: `%${search}%`,
+        },
+      },
+      order: [["title", "ASC"]],
+      limit:limit,
+      offset: (pageNum - 1) * limit,
+      include: [
+        {
+          model: Genre,
+          as: "Genres",
+          attributes: ["id", "genre"],
+          where: {
+            genre: {
+              [Op.in]: genres,
+            },
+          },
+          through: { attributes: [] },
+        },
+      ],
+    });
+    return comics;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
