@@ -1,23 +1,14 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/dbConnect.js";
 
-const Comment = sequelize.define(
-  "Comment",
+const ComicGenre = sequelize.define(
+  "ComicGenre",
   {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Users",
-        key: "id",
-      },
-      onDelete: "CASCADE", // ✅ correct placement
     },
     comicId: {
       type: DataTypes.INTEGER,
@@ -26,18 +17,27 @@ const Comment = sequelize.define(
         model: "Comics",
         key: "id",
       },
-      onDelete: "CASCADE", // ✅ correct placement
+      onDelete: "CASCADE",
     },
-    text: {
-      type: DataTypes.STRING(150),
+    genreId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      validate: {
-        notEmpty: true,
-        len: [1, 150],
+      references: {
+        model: "Genres", // ✅ matches your table name
+        key: "id",
       },
+      onDelete: "CASCADE",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ['comicId', 'genreId'], // ✅ Ensures no duplicate comic-genre pairs
+      },
+    ],
+  }
 );
 
-export default Comment;
+export default ComicGenre;
