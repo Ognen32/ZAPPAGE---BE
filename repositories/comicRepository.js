@@ -182,3 +182,25 @@ export const findComicsBySearchAndGenresLanding = async function (search, genres
     throw new Error(err.message);
   }
 };
+
+//user view latest comics
+export const findLatestAddedComics = async function () {
+  try {
+    const comics = await Comic.findAll({
+      attributes: ["id", "title", "author", "coverArt", "slug", "releaseDate", "createdAt"],
+      order: [["createdAt", "DESC"]],
+      limit: 12,
+      include: [
+        {
+         model: Genre,
+         as: "Genres",
+          attributes: ["id", "genre"],
+          through: { attributes: [] },
+        },
+      ],
+  });
+    return comics;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};

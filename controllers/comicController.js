@@ -1,5 +1,5 @@
 import catchAsyncError from "../middlewares/catchAsyncError.js";
-import {createComic, trendingComics, lookUpAComic, updateComics} from '../services/comicService.js';
+import {createComic, trendingComics, lookUpAComic, updateComics, getLatestComics} from '../services/comicService.js';
 import fs from 'fs';
 
 export const handleCreateComic = async (req, res) => {
@@ -98,6 +98,16 @@ export const lookUpAComicHandler = async (req, res) => {
     const search = req.query.search || req.body.search;
     const genres = req.body.genre;
     const data = await lookUpAComic(search, genres);
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+//user view latest comics
+export const getLatestComicsHandler = async (req, res) => {
+  try {
+    const data = await getLatestComics();
     res.status(200).json(data);
   } catch (err) {
     res.status(400).json({ error: err.message });
