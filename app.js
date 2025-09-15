@@ -6,7 +6,7 @@ import { errorMiddleware } from "./middlewares/error.js";
 import authRoutes from "./routes/authRoutes.js";
 import genreRoutes from "./routes/genreRoutes.js";
 import comicRoutes from './routes/comicRoutes.js';
-// import favouriteBookRoutes from './routes/favouriteBookRoutes.js';
+import favouritesRoutes from './routes/favouritesRoutes.js';
 // import transcationRoutes from './routes/transcationRoutes.js';
 // import cartRoutes from './routes/cartRoutes.js';
 // import transcationItemRoutes from './routes/transcationItemRoutes.js';
@@ -27,13 +27,13 @@ app.use(cors({
 app.use(express.json()); // For parsing incoming json requests
 app.use(cookieParser()); // For parsing cookies incoming json requests
 app.use(express.urlencoded({ extended: true })); // For parsing url encoded data
-app.use(bodyParser.urlencoded({ extended: false }))
+//app.use(bodyParser.urlencoded({ extended: false }))
 
 // Defining routes and giving them a path to connect to the routes
 app.use('/api', authRoutes);
 app.use('/api', genreRoutes);
 app.use('/api', comicRoutes);
-// app.use('/api', favouriteBookRoutes);
+app.use('/api', favouritesRoutes);
 // app.use("/api", transcationRoutes);
 // app.use("/api", cartRoutes);
 // app.use("/api", transcationItemRoutes);

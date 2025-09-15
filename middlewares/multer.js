@@ -35,3 +35,6 @@ export const uploadComicFiles = upload.fields([
   { name: "mainCover", maxCount: 1 },
   { name: "coverArt", maxCount: 1 }
 ]);
+
+
+export const uploadAvatar = multer({ storage }).single("avatar");
