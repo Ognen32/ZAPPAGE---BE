@@ -1,9 +1,10 @@
 import Comic from './comicModel.js';
 import Comment from './commentsModel.js';
 import User from './userModel.js';
-import Genre from './genreModel.js';         // ← Add this
-import ComicGenre from './comicGenre.js'; // ← And this
-import ComicPage from './comicPageModel.js'; // Add this
+import Genre from './genreModel.js';         
+import ComicGenre from './comicGenre.js'; 
+import ComicPage from './comicPageModel.js'; 
+import Favourite from './favoritesModel.js';
 
 
 // User and Comment
@@ -31,5 +32,14 @@ Genre.belongsToMany(Comic, {
 // Comic and ComicPage
 Comic.hasMany(ComicPage, { foreignKey: "comicId", as: "pages" });
 ComicPage.belongsTo(Comic, { foreignKey: "comicId" });
+
+//Favorite and Comic
+Favourite.belongsTo(Comic, { foreignKey: "comicId", as: "Comic" });
+Comic.hasMany(Favourite, { foreignKey: "comicId", as: "Favourites" });
+
+// Favourite and User
+Favourite.belongsTo(User, { foreignKey: "userId", as: "User" });
+User.hasMany(Favourite, { foreignKey: "userId", as: "Favourites" });
+
 
 export default { Comic, User, Comment, Genre, ComicGenre };
