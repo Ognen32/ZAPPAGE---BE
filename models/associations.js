@@ -5,6 +5,7 @@ import Genre from './genreModel.js';
 import ComicGenre from './comicGenre.js'; 
 import ComicPage from './comicPageModel.js'; 
 import Favourite from './favoritesModel.js';
+import UserPageTracker from './userPageTracker.js';
 
 
 // User and Comment
@@ -41,5 +42,14 @@ Comic.hasMany(Favourite, { foreignKey: "comicId", as: "Favourites" });
 Favourite.belongsTo(User, { foreignKey: "userId", as: "User" });
 User.hasMany(Favourite, { foreignKey: "userId", as: "Favourites" });
 
+// User and UserPageTracker
+User.hasMany(UserPageTracker, { foreignKey: "userId", as: "PageTrackers", onDelete: "CASCADE" });
+UserPageTracker.belongsTo(User, { foreignKey: "userId", as: "User" });
 
-export default { Comic, User, Comment, Genre, ComicGenre };
+// Comic and UserPageTracker
+Comic.hasMany(UserPageTracker, { foreignKey: "comicId", as: "PageTrackers", onDelete: "CASCADE" });
+UserPageTracker.belongsTo(Comic, { foreignKey: "comicId", as: "Comic" });
+
+
+
+export default { Comic, User, Comment, Genre, ComicGenre, UserPageTracker };
