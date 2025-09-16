@@ -264,3 +264,23 @@ export const findComicsSearchWithGenre = async function (search, limit, pageNum,
     throw new Error(err.message);
   }
 };
+
+//Comic view
+export const findComicBySlug = async function (slug) {
+  try {
+    const comic = await Comic.findOne({
+      where: { slug: slug },
+      include: [
+        {
+          model: Genre,
+          as: "Genres",
+          attributes: ["id", "genre"],
+          through: { attributes: [] },
+        },
+      ],
+    });
+    return comic;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
