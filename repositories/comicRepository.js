@@ -62,6 +62,15 @@ export const findComicByTitle = async function (title) {
   }
 }
 
+export const findComicBySlug = async function (slug) {
+  try {
+    const comic = await Comic.findOne({ where: { slug } });
+    return comic;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 //landing page
 export const findTrendingComicsLandingPage= async function () {
   try {
