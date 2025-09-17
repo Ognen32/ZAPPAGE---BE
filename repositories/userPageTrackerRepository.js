@@ -23,7 +23,7 @@ export const findUserPage = async function (userId, slug) {
         include: [
           {
             model: Comic,
-            attributes: ['page_count', 'slug'],
+            attributes: ['page_count', 'slug', "title"],
             as: "Comic",
             where: {
                 slug:slug
