@@ -7,6 +7,9 @@ import {
   getLatestComics,
   getComics,
   getComicBySlug,
+  getAllComics,
+  removeComic,
+  getComicById
 } from "../services/comicService.js";
 import fs from "fs";
 
@@ -148,5 +151,37 @@ export const handleGetComicBySlug = async (req, res) => {
     res.status(200).json(comic);
   } catch (err) {
     res.status(404).json({ error: err.message });
+  }
+};
+
+//admin view get all comics
+export const getAllComicsHandler = async (req, res) => {
+  try {
+    const data = await getAllComics();
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+//admin view delete comic
+export const handleRemoveComic = async (req, res) => {
+  try {
+    const comicId = req.params.id;
+    const deletedComic = await removeComic(comicId);
+    res.status(200).json(deletedComic);
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+};
+
+export const handleGetComicById = async (req, res) => {
+  try {
+    const comicId = req.params.id;
+    console.log(comicId);
+    const comic = await getComicById(comicId);
+    res.status(200).json(comic);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };

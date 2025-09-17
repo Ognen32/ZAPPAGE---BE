@@ -10,7 +10,10 @@ import {
   findLatestAddedComics,
   findComicsSearch,
   findComicsSearchWithGenre, 
-  findComicBySlug
+  findComicBySlug,
+  findAllComics,
+  deleteComic,
+  findComicById
 } from "../repositories/comicRepository.js";
 import { findGenreByName } from "../repositories/genreRepository.js";
 import { ErrorHandler } from "../middlewares/error.js";
@@ -20,6 +23,7 @@ import { pageCounter } from "../utils/page_count.js";
 import { uploadComicImages } from "../utils/uploadComicCovers.js";
 import { comicPagesUploader } from "../utils/comicPagesUploader.js";
 import { removeComicFromStorage } from "../utils/removeComic.js";
+import {deleteComicPages} from "../repositories/comicPageRepository.js";
 
 export const createComic = async (
   comicData,
@@ -125,20 +129,19 @@ export const updateComics = async (
   zip
 ) => {
   try {
+    // 1. Normalize text inputs
     for (let key in comicData) {
       if (typeof comicData[key] === "string" && key !== "publisher") {
         comicData[key] = capitalizeTrim(comicData[key]);
       }
     }
 
+    // 2. Update slug if title changed
     if (comicData.title) {
       comicData.slug = slug(comicData.title, { lower: true });
     }
 
-    if (zip) {
-      comicData.page_count = pageCounter(zip.path);
-    }
-
+    // 3. Upload new covers if present
     if (mainCover || coverArt) {
       const comicCovers = await uploadComicImages(comicData.title, {
         mainCoverPath: mainCover?.path,
@@ -149,21 +152,30 @@ export const updateComics = async (
       if (coverArt) comicData.coverArt = comicCovers.coverArt.url;
     }
 
-    const updatedComic = await updateComic(comicId, comicData);
+    // 4. Update base comic data
+    let updatedComic = await updateComic(comicId, comicData);
 
+    // 5. If new zip uploaded, replace pages
     if (zip) {
+      // избриши ги старите страници од DB + Cloudinary
+      await deleteComicPages(updatedComic.id);
+
+      // аплоадирај нови страници
       await comicPagesUploader({
         comicId: updatedComic.id,
         comicTitle: comicData.title,
         zipFilePath: zip.path,
       });
+
+      // update page_count
+      const pageCount = pageCounter(zip.path);
+      updatedComic = await updateComic(comicId, { page_count: pageCount });
     }
 
+    // 6. Update genres
     if (genres) {
       const genreArray = Array.isArray(genres) ? genres : [genres];
-
-      await updatedComic.setGenres([]); 
-
+      await updatedComic.setGenres([]); // clear old genres
       for (const genreName of genreArray) {
         const genre = await findGenreByName(genreName);
         if (!genre) throw new Error(`Genre not found: ${genreName}`);
@@ -171,6 +183,7 @@ export const updateComics = async (
       }
     }
 
+    // 7. Remove temp files from server storage
     if (mainCover || coverArt || zip) {
       removeComicFromStorage(
         mainCover || undefined,
@@ -184,6 +197,7 @@ export const updateComics = async (
     throw new Error(err.message);
   }
 };
+
 
 
 //landing page
@@ -343,6 +357,52 @@ export const getComicBySlug = async (slug) => {
     const comic = await findComicBySlug(slug);
     if (!comic) {
       throw new Error("Comic does not exist."); 
+    }
+    return comic;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+//admin find all comics
+export const getAllComics = async () => {
+  try{
+    const allComics = await findAllComics();
+    console.log(allComics);
+    if (!allComics || allComics.length === 0) {
+      throw new Error("No comics found");
+    }
+    return allComics;
+  } catch (err) {
+    throw new Error("No comics found");
+  }
+};
+
+//admin view delete comic
+export const removeComic = async (comicId) => {
+  try {
+    if (!comicId) {
+      throw new Error("Comic ID must be provided.");
+    }
+    
+    const deletedCount = await deleteComic(comicId);
+    if (deletedCount === 0) {
+      throw new Error("Comic not found. Deletion failed.");
+    }
+    return { message: "Comic was successfully deleted." };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+export const getComicById = async (comicId) => {
+  try {
+    if (!comicId) {
+      throw new Error("Cannot Access Comic");
+    }
+    const comic = await findComicById(comicId);
+    if (!comic) {
+      throw new Error("Comic Does not exist.");
     }
     return comic;
   } catch (err) {
