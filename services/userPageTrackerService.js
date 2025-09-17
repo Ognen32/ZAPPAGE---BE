@@ -10,15 +10,18 @@ export const getUserPages = async (userId, slug) => {
     }
 
     const userComicProgress = await findUserPage(userId, slug);
+    console.log(userComicProgress)
     const response = {
       currentUserPage: 1,
       pages: [],
-      totalPages: 0
+      totalPages: 0,
+      comicTitle: "",
     };
 
     if (!userComicProgress) {
       const comic = await findComicBySlug(slug);
       response.totalPages = comic.page_count;
+      response.comicTitle = comic.title;
       await createUserPage(userId, comic.id, 1);
 
       for (let i = 1; i < 3 && i <= comic.page_count; i++) {
@@ -38,6 +41,7 @@ export const getUserPages = async (userId, slug) => {
 
     response.currentUserPage = userComicProgress.currentPageNumber;
     response.totalPages = userComicProgress.Comic.page_count;
+    response.comicTitle = userComicProgress.Comic.title;
 
     const currentPageNum = response.currentUserPage;
     const total = response.totalPages;
@@ -64,7 +68,7 @@ export const getUserPages = async (userId, slug) => {
       }
     });
 
-    return response;
+    return response;  
 
   } catch (err) {
     throw new Error(err.message);

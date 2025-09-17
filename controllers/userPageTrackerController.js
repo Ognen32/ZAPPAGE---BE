@@ -11,7 +11,7 @@ export const handleUserPages = async (req, res) => {
     res.status(200).json(userPages);
 
     }catch(err) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error: err.message });
     }
 }
 
