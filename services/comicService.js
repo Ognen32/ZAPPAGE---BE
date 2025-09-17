@@ -9,7 +9,8 @@ import {
   findComicsBySearchAndGenresLanding,
   findLatestAddedComics,
   findComicsSearch,
-  findComicsSearchWithGenre
+  findComicsSearchWithGenre, 
+  findComicBySlug
 } from "../repositories/comicRepository.js";
 import { findGenreByName } from "../repositories/genreRepository.js";
 import { ErrorHandler } from "../middlewares/error.js";
@@ -328,6 +329,22 @@ export const getComics = async (search, genres, pageNum) => {
     }
 
     return comics;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+//comic view
+export const getComicBySlug = async (slug) => {
+  try {
+    if (!slug) {
+      throw new Error("Cannot access comic"); 
+    }
+    const comic = await findComicBySlug(slug);
+    if (!comic) {
+      throw new Error("Comic does not exist."); 
+    }
+    return comic;
   } catch (err) {
     throw new Error(err.message);
   }

@@ -1,47 +1,60 @@
 import catchAsyncError from "../middlewares/catchAsyncError.js";
-import {createComic, trendingComics, lookUpAComic, updateComics, getLatestComics, getComics} from '../services/comicService.js';
-import fs from 'fs';
+import {
+  createComic,
+  trendingComics,
+  lookUpAComic,
+  updateComics,
+  getLatestComics,
+  getComics,
+  getComicBySlug,
+} from "../services/comicService.js";
+import fs from "fs";
 
 export const handleCreateComic = async (req, res) => {
-    try{
-        const {
-            title,
-            author,
-            shortDescription,
-            description,
-            releaseDate,
-            publisher,
-            page_count,
-        } = req.body;
+  try {
+    const {
+      title,
+      author,
+      shortDescription,
+      description,
+      releaseDate,
+      publisher,
+      page_count,
+    } = req.body;
 
-        const comicData = {
-            title,
-            author,
-            shortDescription,
-            description,
-            releaseDate,
-            publisher,
-            page_count,
-        };
-          const genres = req.body.genre;
-          const mainCover = req.files.mainCover[0];
-          const coverArt = req.files.coverArt[0];
-          const zip = req.files.comicZip[0];
-        //   fs.unlinkSync(req.files.mainCover[0].path);
-        //   fs.unlinkSync(req.files.coverArt[0].path);
-          
-    const comic = await createComic(comicData, genres, mainCover, coverArt, zip )
+    const comicData = {
+      title,
+      author,
+      shortDescription,
+      description,
+      releaseDate,
+      publisher,
+      page_count,
+    };
+    const genres = req.body.genre;
+    const mainCover = req.files.mainCover[0];
+    const coverArt = req.files.coverArt[0];
+    const zip = req.files.comicZip[0];
+    //   fs.unlinkSync(req.files.mainCover[0].path);
+    //   fs.unlinkSync(req.files.coverArt[0].path);
 
-    res.status(201).json({msg: comic})
-        
-    }catch(err){
-        res.status(500).json({ error: err.message });
-    }
+    const comic = await createComic(
+      comicData,
+      genres,
+      mainCover,
+      coverArt,
+      zip
+    );
+
+    res.status(201).json({ msg: comic });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 export const updateComicHandler = async (req, res) => {
-  try{
-    const comicId = req.params.id; 
+  try {
+    const comicId = req.params.id;
     const {
       title,
       author,
@@ -64,9 +77,9 @@ export const updateComicHandler = async (req, res) => {
 
     const genres = req.body.genre;
 
-   const mainCover = req.files?.mainCover?.[0] || null;
-const coverArt = req.files?.coverArt?.[0] || null;
-const zip = req.files?.comicZip?.[0] || null;
+    const mainCover = req.files?.mainCover?.[0] || null;
+    const coverArt = req.files?.coverArt?.[0] || null;
+    const zip = req.files?.comicZip?.[0] || null;
 
     const updatedComic = await updateComics(
       comicId,
@@ -122,6 +135,17 @@ export const ComicsSearchHandler = async (req, res) => {
     const pageNum = req.query.pageNum || req.body.pageNum;
     const comics = await getComics(search, genres, pageNum);
     res.status(200).json(comics);
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+};
+
+//comic view
+export const handleGetComicBySlug = async (req, res) => {
+  try {
+    const slug = req.params.slug;
+    const comic = await getComicBySlug(slug);
+    res.status(200).json(comic);
   } catch (err) {
     res.status(404).json({ error: err.message });
   }
