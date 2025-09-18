@@ -3,6 +3,7 @@ import { Op } from "sequelize";
 import Genre from "../models/genreModel.js"
 import ComicPage from '../models/comicPageModel.js'; 
 import ComicGenre from '../models/comicGenre.js';
+import UserPageTracker from '../models/userPageTracker.js';
 import { v2 as cloudinary } from "cloudinary";
 
 export const createComicInstance = async function (comicData) {
@@ -351,6 +352,33 @@ export const findComicById = async function (comicId) {
 
     if (!comic) throw new Error("Comic not found");
     return comic;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+
+export const findUserComics = async function (userid) {
+  try {
+    const userComics = await UserPageTracker.findAll({
+      where: {
+        userId: userid,
+      },
+      include: [
+        {
+          model: Comic,
+          as: "Comic", // this must match the alias from your association
+          include: [
+            {
+              model: Genre,
+              as: "Genres",
+            }
+          ]
+        },
+      ],
+    });
+
+    return userComics; // <-- return the result
   } catch (err) {
     throw new Error(err.message);
   }
