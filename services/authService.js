@@ -5,6 +5,8 @@ import {
   createUser,
   findUserById,
   updateUserById,
+  deleteUser,
+  AllUsers,
 } from "../repositories/authRepos.js";
 import { sendToken } from "../utils/jwtToken.js";
 import { ErrorHandler } from "../middlewares/error.js";
@@ -140,4 +142,34 @@ export const updateUserService = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const removeUser = async (userId) => {
+  try {
+    if (!userId) {
+      throw new ValidationError("Must enter userId!");
+    }
+
+    const user = await findUserById(userId);
+    if (!user) {
+      throw new ValidationError("User has not been found!");
+    }
+
+    await deleteUser(userId);
+
+    return { message: `User has been successfully removed.` };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+
+export const getAllUsers = async () => {
+  const users = await AllUsers();
+
+  if (!users || users.length === 0) {
+    throw new Error("No users found");
+  }
+
+  return users;
 };

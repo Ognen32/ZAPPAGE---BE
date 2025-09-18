@@ -5,6 +5,8 @@ import {
   loginUserService,
   logoutUserService,
   updateUserService,
+  removeUser,
+  getAllUsers
 } from "../services/authService.js";
 
 export const registerUser = catchAsyncError(async (req, res, next) => {
@@ -49,3 +51,36 @@ export const hanldeGetUserByIDHeader = async (req, res) => {
 export const updateUser = catchAsyncError(async (req, res, next) => {
   await updateUserService(req, res, next);
 });
+
+export const handleRemoveUser = async (req, res) => {
+  try {
+    const userId = req.params.id; 
+    const result = await removeUser(userId);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+export const hanldeGetUserByID = async (req, res) => {
+   try {
+    const userId = req.params.id; 
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const user = await getUserByIDHeader(userId); 
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+export const handleGetAllUsers = async (req, res) => {
+  try {
+    const users = await getAllUsers();
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
