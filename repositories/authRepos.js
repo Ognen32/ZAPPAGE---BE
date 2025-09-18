@@ -1,4 +1,5 @@
 import User from "../models/userModel.js";
+import { Op } from "sequelize";
 
 export const findUserById = async function (userid) {
   try {
@@ -69,3 +70,30 @@ export const updateUserById = async (id, updatedData) => {
   }
 };
 
+
+export const deleteUser = async (userId) => {
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) throw new Error('User not found');
+    await user.destroy();
+    return true;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+export const AllUsers = async () => {
+  try {
+    const users = await User.findAll({
+      attributes: { exclude: ["password", "resetPasswordToken", "resetPasswordExpire"] },
+      where: {
+        role: {
+          [Op.not]: "admin" // враќа сите кои не се admin
+        }
+      }
+    });
+    return users;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};

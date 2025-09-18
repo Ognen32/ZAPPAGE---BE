@@ -5,6 +5,9 @@ import {
   loginUser,
   logoutUser,
   updateUser,
+  handleRemoveUser,
+  hanldeGetUserByID,
+  handleGetAllUsers
 } from "../controllers/authController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 import { uploadAvatar } from "../middlewares/multer.js";
@@ -19,6 +22,9 @@ router.post("/login", loginUser);
 router.get("/logout", logoutUser);
 router.get("/userInfo", isAuthenticated, hanldeGetUserByIDHeader);
 router.patch("/users/:id", updateUser);
+router.delete("/removeUser/:id", handleRemoveUser);
+router.get("/user/:id", hanldeGetUserByID);
+router.get("/users", handleGetAllUsers);
 
 router.get("/isAuth", isAuthenticated, (req, res) => {
   res.status(200).json({ authenticated: true, user: req.user });
