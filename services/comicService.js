@@ -13,7 +13,8 @@ import {
   findComicBySlug,
   findAllComics,
   deleteComic,
-  findComicById
+  findComicById,
+  findUserComics
 } from "../repositories/comicRepository.js";
 import { findGenreByName } from "../repositories/genreRepository.js";
 import { ErrorHandler } from "../middlewares/error.js";
@@ -409,3 +410,15 @@ export const getComicById = async (comicId) => {
     throw new Error(err.message);
   }
 };
+
+export const getUserComics = async (userId) => {
+  try {
+    if (!userId) throw new Error("Must Have userID!");
+    const userLibrary = await findUserComics(userId);
+    console.log(userLibrary);
+    return userLibrary;
+
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}

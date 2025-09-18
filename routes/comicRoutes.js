@@ -9,9 +9,11 @@ import {
   handleGetComicBySlug,
   getAllComicsHandler,
   handleRemoveComic,
-  handleGetComicById
+  handleGetComicById,
+  handleUserLibrary
 } from "../controllers/comicController.js";
 import { uploadComicFiles } from "../middlewares/multer.js";
+import { isAuthenticated } from "../middlewares/auth.js";
 const router = express.Router();
 
 //admin
@@ -28,6 +30,7 @@ router.post("/landingPage/LookUpAComic", lookUpAComicHandler);
 //user
 router.get("/latestComics", getLatestComicsHandler);
 router.get("/search", ComicsSearchHandler);
-router.get("/comic/:slug", handleGetComicBySlug); //comic view
+router.get("/comic/:slug", handleGetComicBySlug); //comic view\
+router.get("/myLibrary", isAuthenticated, handleUserLibrary)
 
 export default router;

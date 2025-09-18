@@ -9,7 +9,8 @@ import {
   getComicBySlug,
   getAllComics,
   removeComic,
-  getComicById
+  getComicById,
+  getUserComics
 } from "../services/comicService.js";
 import fs from "fs";
 
@@ -185,3 +186,14 @@ export const handleGetComicById = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const handleUserLibrary = async (req,res) => {
+  try{
+    const userid = req.user.id;
+    const comics = await getUserComics(userid);
+    res.status(200).json(comics)
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
