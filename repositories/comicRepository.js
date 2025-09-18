@@ -1,6 +1,9 @@
 import Comic from "../models/comicModel.js";
 import { Op } from "sequelize";
 import Genre from "../models/genreModel.js"
+import ComicPage from '../models/comicPageModel.js'; 
+import ComicGenre from '../models/comicGenre.js';
+import { v2 as cloudinary } from "cloudinary";
 
 export const createComicInstance = async function (comicData) {
   try {
@@ -24,16 +27,17 @@ export const createComicInstance = async function (comicData) {
 };
 
 export const updateComic = async function (comicId, comicData) {
-  try{
+  try {
     const comic = await Comic.findByPk(comicId);
-    if (!comic)
+    if (!comic) {
       throw new Error("Comic not found");
+    }
 
     await comic.update({
       title: comicData.title,
       slug: comicData.slug,
       author: comicData.author,
-       shortDescription: comicData.shortDescription,
+      shortDescription: comicData.shortDescription,
       description: comicData.description,
       releaseDate: comicData.releaseDate,
       publisher: comicData.publisher,
@@ -42,6 +46,7 @@ export const updateComic = async function (comicId, comicData) {
       page_count: comicData.page_count,
       totalViewed: comicData.totalViewed,
     });
+
     return comic;
   } catch (err) {
     throw new Error(err.message);
@@ -288,6 +293,72 @@ export const findComicBySlug = async function (slug) {
         },
       ],
     });
+    return comic;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+//admin view find all comics
+export const findAllComics = async function () {
+  try {
+    const comics = await Comic.findAll({
+      attributes: ["id", "title", "author", "coverArt", "slug", "releaseDate", "createdAt"],
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+         model: Genre,
+         as: "Genres",
+          attributes: ["id", "genre"],
+          through: { attributes: [] },
+        },
+      ],
+  });
+    return comics;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+//admin view delete comic
+export const deleteComic = async function (comicId) {
+  try {
+    await ComicPage.destroy({ where: { comicId } });
+
+    await ComicGenre.destroy({ where: { comicId } });
+    
+    await ComicPage.destroy({ where: { comicId } });
+
+    const comic = await Comic.destroy({
+      where: {
+        id: comicId,
+      },
+    });
+    return comic;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+export const findComicById = async function (comicId) {
+  try {
+    const comic = await Comic.findByPk(comicId, {
+      include: [
+        {
+          model: Genre,
+          as: "Genres",
+          attributes: ["id", "genre"],
+          through: { attributes: [] },
+        },
+        {
+          model: ComicPage,
+          as: "pages",
+          attributes: ["page", "pageUrl"],
+          order: [["page", "ASC"]], 
+        },
+      ],
+    });
+
+    if (!comic) throw new Error("Comic not found");
     return comic;
   } catch (err) {
     throw new Error(err.message);

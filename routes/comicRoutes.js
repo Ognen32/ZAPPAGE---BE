@@ -7,6 +7,9 @@ import {
   getLatestComicsHandler,
   ComicsSearchHandler,
   handleGetComicBySlug,
+  getAllComicsHandler,
+  handleRemoveComic,
+  handleGetComicById
 } from "../controllers/comicController.js";
 import { uploadComicFiles } from "../middlewares/multer.js";
 const router = express.Router();
@@ -14,6 +17,9 @@ const router = express.Router();
 //admin
 router.post("/createComic", uploadComicFiles, handleCreateComic);
 router.patch("/updateComic/:id", uploadComicFiles, updateComicHandler);
+router.delete("/deleteComic/:id", handleRemoveComic);
+router.get("/comics", getAllComicsHandler);
+router.get("/comic/:id", handleGetComicById);
 
 //landing page
 router.get("/landingPage/trendingComics", getTrendingComicsHandler);
