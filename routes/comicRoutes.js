@@ -19,7 +19,7 @@ router.post("/createComic", uploadComicFiles, handleCreateComic);
 router.patch("/updateComic/:id", uploadComicFiles, updateComicHandler);
 router.delete("/deleteComic/:id", handleRemoveComic);
 router.get("/comics", getAllComicsHandler);
-router.get("/comic/:id", handleGetComicById);
+router.get("/comics/:id", handleGetComicById);
 
 //landing page
 router.get("/landingPage/trendingComics", getTrendingComicsHandler);
